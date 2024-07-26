@@ -1,0 +1,18 @@
+name: Possible Scala CLI Issue
+
+on:
+  workflow_dispatch:
+
+jobs:
+  detect:
+    name: Show possible issue
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup Java
+        run: echo "JAVA_HOME=${JAVA_HOME_17_X64}" >> "$GITHUB_ENV"
+      - uses: VirtusLab/scala-cli-setup@v1
+        with:
+          jvm: '' # Deliberately empty to avoid downloading JVM
+      - id: detect-versions
+        run: |
+          echo 'println("Hello")' | scala-cli _.sc

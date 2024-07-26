@@ -4,8 +4,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  detect:
-    name: Show possible issue
+  works:
+    name: Show that Scala CLI works with JVM it downloads
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: VirtusLab/scala-cli-setup@v1
+      - run: echo 'println("Hello")' | scala-cli _.sc
+
+  fails:
+    name: Show that Scala CLI fails with System JVM
     runs-on: ubuntu-22.04
     steps:
       - name: Setup Java
@@ -13,6 +20,15 @@ jobs:
       - uses: VirtusLab/scala-cli-setup@v1
         with:
           jvm: '' # Deliberately empty to avoid downloading JVM
-      - id: detect-versions
-        run: |
-          echo 'println("Hello")' | scala-cli _.sc
+      - run: echo 'println("Hello")' | scala-cli _.sc
+
+  workaround:
+    name: Show workaround with --server=false
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Setup Java
+        run: echo "JAVA_HOME=${JAVA_HOME_17_X64}" >> "$GITHUB_ENV"
+      - uses: VirtusLab/scala-cli-setup@v1
+        with:
+          jvm: '' # Deliberately empty to avoid downloading JVM
+      - run: echo 'println("Hello")' | scala-cli --server=false _.sc
